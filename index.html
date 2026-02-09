@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <!-- AdSense verification -->
+    <meta name="google-adsense-account" content="ca-pub-8410279996360181">
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8410279996360181"
+        crossorigin="anonymous"></script>
+
+    <title>Work Hours Calculator</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-links a {
+            margin-left: 16px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: grid;
+            grid-template-columns: 120px 1fr 120px;
+            grid-template-rows: auto 1fr auto;
+            min-height: calc(100vh - 60px);
+        }
+
+        .top-ad,
+        .bottom-ad {
+            grid-column: 1 / 4;
+            text-align: center;
+            background: #fff;
+            padding: 8px;
+        }
+
+        .left-ad,
+        .right-ad {
+            background: #fff;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 14px;
+            cursor: pointer;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        button.remove {
+            background: #dc3545;
+        }
+
+        .result {
+            margin-top: 20px;
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #2c7be5;
+        }
+
+        footer {
+            text-align: center;
+            padding: 12px;
+            background: #fff;
+            font-size: 14px;
+        }
+
+        footer a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .left-ad,
+            .right-ad {
+                display: none;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">⏱️ Work Hours Calculator</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+
+        <!-- TOP AD -->
+        <div class="top-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
+                data-ad-slot="3357060842" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+
+        <!-- LEFT AD -->
+        <div class="left-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
+                data-ad-slot="9599025823" data-ad-format="auto"></ins>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <h1>⏱️ Work Hours Calculator</h1>
+
+            <p>
+                Calculate your total productive working hours and know exactly
+                when you can leave the office after completing your target hours.
+            </p>
+
+            <label>
+                Target Productive Hours:
+                <input type="number" id="targetHours" value="8" step="0.25" />
+            </label>
+
+            <h3>Clock In / Out (HH:MM:SS)</h3>
+            <div id="timeRows"></div>
+
+            <button onclick="addRow()">➕ Add Entry</button>
+
+            <div class="result" id="result"></div>
+        </div>
+
+        <!-- RIGHT AD -->
+        <div class="right-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
+                data-ad-slot="9599025823" data-ad-format="auto"></ins>
+        </div>
+
+        <!-- BOTTOM AD -->
+        <div class="bottom-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
+                data-ad-slot="3357060842" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+    </footer>
+
+    <script>
+        function addRow() {
+            const row = document.createElement("div");
+            row.className = "row";
+            row.innerHTML = `
+                <input type="time" step="1" class="inTime">
+                <input type="time" step="1" class="outTime">
+                <button class="remove" onclick="this.parentElement.remove(); calculate()">✖</button>
+            `;
+            document.getElementById("timeRows").appendChild(row);
+        }
+
+        function timeToSeconds(t) {
+            const [h, m, s] = t.split(":").map(Number);
+            return h * 3600 + m * 60 + s;
+        }
+
+        function secondsToHMS(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        }
+
+        function secondsTo12Hour(sec) {
+            sec %= 86400;
+            let h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            const ap = h >= 12 ? "PM" : "AM";
+            h = h % 12 || 12;
+            return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")} ${ap}`;
+        }
+
+        function calculate() {
+            const ins = document.querySelectorAll(".inTime");
+            const outs = document.querySelectorAll(".outTime");
+
+            let total = 0;
+            let lastIn = null;
+
+            ins.forEach((el, i) => {
+                if (el.value) lastIn = timeToSeconds(el.value);
+                if (el.value && outs[i].value) {
+                    total += timeToSeconds(outs[i].value) - timeToSeconds(el.value);
+                }
+            });
+
+            const target = document.getElementById("targetHours").value * 3600;
+            const remain = target - total;
+
+            let html = `<p>Total Productive Time: <span class="highlight">${secondsToHMS(total)}</span></p>`;
+
+            if (remain > 0 && lastIn !== null) {
+                html += `
+                    <p>Remaining Time: <span class="highlight">${secondsToHMS(remain)}</span></p>
+                    <p>You can leave at: <span class="highlight">${secondsTo12Hour(lastIn + remain)}</span></p>
+                `;
+            } else if (remain <= 0) {
+                html += `<p class="highlight">🎉 Target completed! You can leave now.</p>`;
+            }
+
+            document.getElementById("result").innerHTML = html;
+        }
+
+        document.addEventListener("input", calculate);
+        addRow();
+
+        // Load all ads
+        document.querySelectorAll('.adsbygoogle').forEach(() => {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        });
+    </script>
+
+</body>
+
+</html>
