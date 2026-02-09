@@ -3,10 +3,16 @@
 
 <head>
     <meta charset="UTF-8" />
-    <!-- Google AdSense -->
+
+    <!-- REQUIRED: AdSense Account Verification -->
+    <meta name="google-adsense-account" content="ca-pub-8410279996360181">
+
+    <!-- Google AdSense Loader -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8410279996360181"
         crossorigin="anonymous"></script>
+
     <title>Work Hours Calculator</title>
+
     <style>
         body {
             margin: 0;
@@ -21,13 +27,7 @@
             min-height: 100vh;
         }
 
-        .top-ad {
-            grid-column: 1 / 4;
-            text-align: center;
-            background: #fff;
-            padding: 8px;
-        }
-
+        .top-ad,
         .bottom-ad {
             grid-column: 1 / 4;
             text-align: center;
@@ -90,7 +90,19 @@
             color: #2c7be5;
         }
 
-        /* Mobile optimization */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        footer a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
             .layout {
                 grid-template-columns: 1fr;
@@ -117,12 +129,17 @@
         <!-- LEFT AD -->
         <div class="left-ad">
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
-                data-ad-slot="9599025823" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                data-ad-slot="9599025823" data-ad-format="auto"></ins>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="container">
             <h1>⏱️ Work Hours Calculator</h1>
+
+            <p>
+                This tool helps employees and professionals calculate their daily productive working hours
+                and know exactly when they can leave the office after completing target hours.
+            </p>
 
             <label>
                 Target Productive Hours:
@@ -140,7 +157,7 @@
         <!-- RIGHT AD -->
         <div class="right-ad">
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8410279996360181"
-                data-ad-slot="9599025823" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                data-ad-slot="9599025823" data-ad-format="auto"></ins>
         </div>
 
         <!-- BOTTOM AD -->
@@ -151,17 +168,21 @@
 
     </div>
 
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
+    <footer>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+    </footer>
 
+    <script>
         function addRow() {
             const row = document.createElement("div");
             row.className = "row";
             row.innerHTML = `
-      <input type="time" step="1" class="inTime">
-      <input type="time" step="1" class="outTime">
-      <button class="remove" onclick="this.parentElement.remove(); calculate()">✖</button>
-    `;
+                <input type="time" step="1" class="inTime">
+                <input type="time" step="1" class="outTime">
+                <button class="remove" onclick="this.parentElement.remove(); calculate()">✖</button>
+            `;
             document.getElementById("timeRows").appendChild(row);
         }
 
@@ -208,9 +229,9 @@
 
             if (remain > 0 && lastIn !== null) {
                 html += `
-        <p>Remaining Time: <span class="highlight">${secondsToHMS(remain)}</span></p>
-        <p>You can leave at: <span class="highlight">${secondsTo12Hour(lastIn + remain)}</span></p>
-      `;
+                    <p>Remaining Time: <span class="highlight">${secondsToHMS(remain)}</span></p>
+                    <p>You can leave at: <span class="highlight">${secondsTo12Hour(lastIn + remain)}</span></p>
+                `;
             } else if (remain <= 0) {
                 html += `<p class="highlight">🎉 Target completed! You can leave now.</p>`;
             }
@@ -220,6 +241,11 @@
 
         document.addEventListener("input", calculate);
         addRow();
+
+        // Load all ads safely
+        document.querySelectorAll('.adsbygoogle').forEach(() => {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        });
     </script>
 
 </body>
