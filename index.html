@@ -607,15 +607,10 @@
                 <div class="card reveal active">
                     <h2 style="margin-bottom: 25px; text-align: center;">Workday Performance Audit</h2>
 
-                    <div class="input-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="input-group">
-                            <label>Target Productive Hours</label>
-                            <input type="number" id="targetHours" value="8" step="0.25">
-                        </div>
-                        <div class="input-group">
-                            <label>Non-Work Intervals (Total Mins)</label>
-                            <input type="number" id="breakMinutes" placeholder="e.g. 60">
-                        </div>
+                    <div class="input-group" style="max-width: 400px; margin: 0 auto 30px;">
+                        <label style="text-align: center;">Target Productive Hours</label>
+                        <input type="number" id="targetHours" value="8" step="0.25" style="text-align: center;"
+                            oninput="calculateAll()">
                     </div>
 
                     <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e2e8f0;">
@@ -636,26 +631,21 @@
                     <h3 style="margin-bottom: 20px; font-weight: 700; color: #f8fafc; text-align: center;">Productivity
                         Diagnosis</h3>
 
-                    <div class="stat-grid">
+                    <div class="stat-grid" style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 15px;">
                         <div class="stat-box">
-                            <span class="stat-val" id="resHours">00:00:00</span>
-                            <small style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Worked So
-                                Far</small>
+                            <span class="stat-val" id="resHours" style="font-size: 1.6rem;">00:00:00</span>
+                            <small style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Total
+                                Worked</small>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-val" id="resRemaining">00:00:00</span>
-                            <small style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Remaining
-                                Time</small>
+                            <span class="stat-val" id="resRemaining" style="font-size: 1.6rem;">00:00:00</span>
+                            <small
+                                style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Remaining</small>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-val" id="resLeaveAt">--:--</span>
+                            <span class="stat-val" id="resLeaveAt" style="font-size: 1.6rem;">--:--:--</span>
                             <small style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Suggested
                                 Departure</small>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-val" id="resScore">0%</span>
-                            <small style="text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Focus
-                                Grade</small>
                         </div>
                     </div>
 
@@ -972,21 +962,20 @@
             }
         });
 
-        // Logic to Add Dynamic Rows
         function addRow() {
             const container = document.getElementById("timeRows");
             const row = document.createElement("div");
             row.className = "time-row";
+            row.style = "display: flex; gap: 10px; margin-bottom: 10px; align-items: center;";
             row.innerHTML = `
-            <input type="time" step="1" class="inTime" oninput="calculateAll()">
+            <input type="time" step="1" class="inTime" style="flex:1; padding:8px;" oninput="calculateAll()">
             <span style="color: #94a3b8;">to</span>
-            <input type="time" step="1" class="outTime" oninput="calculateAll()">
-            <button class="remove-btn" onclick="this.parentElement.remove(); calculateAll()">✕</button>
+            <input type="time" step="1" class="outTime" style="flex:1; padding:8px;" oninput="calculateAll()">
+            <button class="remove-btn" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;" onclick="this.parentElement.remove(); calculateAll()">✕</button>
         `;
             container.appendChild(row);
         }
 
-        // Helper functions for time conversion
         function timeToSeconds(t) {
             if (!t) return 0;
             const [h, m, s] = t.split(":").map(Number);
@@ -1001,77 +990,61 @@
             return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
         }
 
+        // UPDATED: Now includes seconds
         function secondsTo12Hour(sec) {
             sec %= 86400;
             let h = Math.floor(sec / 3600);
             const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
             const ap = h >= 12 ? "PM" : "AM";
             h = h % 12 || 12;
-            return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+            return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")} ${ap}`;
         }
 
-        // Main Unified Calculation Engine
         function calculateAll() {
             const ins = document.querySelectorAll(".inTime");
             const outs = document.querySelectorAll(".outTime");
-            const breakMins = parseFloat(document.getElementById('breakMinutes').value) || 0;
             const targetH = parseFloat(document.getElementById('targetHours').value) || 0;
 
             let totalWorkedSeconds = 0;
             let lastInSeconds = null;
 
-            // 1. Calculate Time from Log
             ins.forEach((el, i) => {
-                const inVal = el.value;
-                const outVal = outs[i].value;
-
-                if (inVal) {
-                    lastInSeconds = timeToSeconds(inVal);
-                    if (outVal) {
-                        totalWorkedSeconds += (timeToSeconds(outVal) - timeToSeconds(inVal));
+                if (el.value) {
+                    lastInSeconds = timeToSeconds(el.value);
+                    if (outs[i].value) {
+                        totalWorkedSeconds += (timeToSeconds(outs[i].value) - timeToSeconds(el.value));
                     }
                 }
             });
 
-            // 2. Adjust for Breaks (if breaks are entered, subtract from total work)
-            // Note: Usually people enter logs EXCLUDING breaks, but here we provide both
-            const adjustedWorkSec = totalWorkedSeconds - (breakMins * 60);
             const targetSeconds = targetH * 3600;
-            const remainingSeconds = targetSeconds - adjustedWorkSec;
+            const remainingSeconds = targetSeconds - totalWorkedSeconds;
 
-            // 3. Update Results UI
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'block';
-
+            document.getElementById('result').style.display = 'block';
             document.getElementById('resHours').innerText = secondsToHMS(totalWorkedSeconds);
-            document.getElementById('resRemaining').innerText = remainingSeconds > 0 ? secondsToHMS(remainingSeconds) : "Done!";
+            document.getElementById('resRemaining').innerText = remainingSeconds > 0 ? secondsToHMS(remainingSeconds) : "Goal Met!";
 
-            // Suggested Leave Time
             if (remainingSeconds > 0 && lastInSeconds !== null) {
                 document.getElementById('resLeaveAt').innerText = secondsTo12Hour(lastInSeconds + remainingSeconds);
             } else {
                 document.getElementById('resLeaveAt').innerText = "Now";
             }
 
-            // 4. Focus Score Calculation
-            const score = targetSeconds > 0 ? Math.min(100, Math.max(0, (adjustedWorkSec / targetSeconds) * 100)) : 0;
-            document.getElementById('resScore').innerText = `${score.toFixed(1)}%`;
-
-            // 5. Feedback Logic
             let feedback = "";
-            if (score >= 90) feedback = "🏆 Elite Productivity: You are mastering your flow state.";
-            else if (score >= 50) feedback = "✨ Balanced: Solid progress towards your target.";
-            else feedback = "⚠️ Attention Risk: High administrative or break time detected.";
+            if (totalWorkedSeconds >= targetSeconds) {
+                feedback = "🎉 Target completed! You've done the work.";
+            } else if (totalWorkedSeconds > 0) {
+                feedback = "🚀 On track. Keep the momentum going!";
+            }
 
             document.getElementById('feedback').innerText = feedback;
         }
 
-        // Initialize first row
         window.onload = () => {
             addRow();
-            // Load Ads
             if (window.adsbygoogle) {
-                document.querySelectorAll('.adsbygoogle').forEach(el => (adsbygoogle = window.adsbygoogle || []).push({}));
+                document.querySelectorAll('.adsbygoogle').forEach(() => (adsbygoogle = window.adsbygoogle || []).push({}));
             }
         };
 
